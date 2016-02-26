@@ -266,7 +266,8 @@ protected:
 
  派生类的继承方式为private，即私有继承方式时，基类的公有成员和保护成员被派生类继承后变成派生类的私有成员，
  而基类的私有成员在派生类中不能访问。 派生类的新增成员可以直接访问基类的公有成员和保护成员，但是在类的外
- 部通过派生类的对象不能访问它们，而派生类的成员和派生类的对象都不能访问基类的私有成员。
+ 部通过派生类的对象不能访问它们，而派生类的成员和派生类的对象都不能访问基类的私有成员。(私有继承使得基类的成员在
+ 其派生类后续的派生中不能再被访问，中止了基类成员继续向下派生，这对代码的复用性没有好处，所以一般很少使用私有继承方式。)
 */
 class salesman : public employee
 {
@@ -282,6 +283,82 @@ private:
 	float m_fProportion;//提成比例
 	float m_fSalesSum;//当月总销售额
 };
+
+class Base// 基类Base的声明
+{
+public:// 公有成员函数
+	void SetTwo(int a, int b)  { x=a; y=b; }
+	int GetX()   { return x; }
+	int GetY()   { return y; }
+
+private:// 私有数据成员
+	int x;
+	int y;
+};
+
+class Child : private Base // 派生类的声明，继承方式为私有继承
+{
+public:                      // 新增公有成员函数
+	void SetThree(int a, int b, int c) { SetTwo(a, b); z=c; }
+	int GetX() { return Base::GetX(); }//访问基类的同名方法，注意访问格式
+	int GetY() { return Base::GetY(); }
+	int GetZ() { return z; }
+
+private: // 新增私有数据成员
+	int z;
+};
+
+class Base1// 基类Base1，只有默认构造函数
+{
+public:
+	Base1(){ cout<<"Base1 construct"<<endl; }
+	 ~Base1(){ cout<<"Base1 destruct"<<endl; }//Base1的析构函数
+};
+
+class Base2// 基类Base2，只有带参数的构造函数
+{
+public:
+	Base2(int x){ cout<<"Base2 construct "<<x<<endl; }
+	~Base2(){ cout<<"Base2 destruct"<<endl; }//Base2的析构函数
+};
+
+class Base3// 基类Base3，只有带参数的构造函数
+{
+public:
+	Base3(int y){ cout<<"Base3 construct "<<y<<endl; }
+	~Base3(){ cout<<"Base3 destruct"<<endl;}//Base3的析构函数
+};
+
+class Child2 : public Base2, public Base1, public Base3// 派生类Child
+{
+public:
+	/*
+    基类的构造函数若有参数，则派生类必须定义构造函数，将传入的参数再传递给基类的构造函数，对基类进行初始化。
+
+	构造派生类的对象调用构造函数时的处理顺序是：1.首先调用基类的构造函数，若有多个基类，调用顺序按照它们在派
+	生类声明时从左到右出现的顺序；2.如果有内嵌对象成员，则调用内嵌对象成员的构造函数，若为多个内嵌对象，
+	则按照它们在派生类中声明的顺序调用，如果无内嵌对象则跳过这一步；3.调用派生类构造函数中的语句。
+
+    若定义有析构函数，则派生类的析构函数一般只需要在其函数体中清理新增成员就可以了，对于继承的基类成员和派生类内嵌对象成员的清理
+	，一般由系统自动调用基类和对象成员的析构函数来完成。这个执行过程的顺序正好和派生类构造函数相反：1.执行析构
+	函数语句清理派生类的新增成员；2.调用内嵌对象成员所属类的析构函数清理派生类内嵌对象成员，各个对象成员的清理顺
+	序与其在构造函数中的构造顺序相反；3.调用基类的析构函数清理继承的基类成员，如果是多继承则各个基类的清理顺序也
+	与其在构造函数中的构造顺序相反。总起来一句话，析构函数执行时所有成员或对象的清理顺序与构造函数的构造顺序刚好完全相反。
+	*/
+	Child2(int i,int j,int k,int m):Base2(i),b3(j),b2(k),Base3(m){ }//带有基类的构造函数和内嵌对象；声明并定义
+	Child2(int p,int m,int n);//只声明
+
+private: // 派生类的内嵌对象成员
+	Base1 b1;
+	Base2 b2;
+	Base3 b3;
+};
+
+Child2::Child2(int p,int m,int n):Base2(p),b3(m),b2(n),Base3(p)//定义
+{
+
+}
+
 //类的继承与派生：end
 
 int main()
@@ -337,6 +414,12 @@ int main()
 	S3.PutElem(g); // 向对象S3中存入Student结构体类型变量g
 	// 输出对象S3的数据成员
 	cout << "The student id is " << S3.GetElem().id << endl;//注意结构体访问其数据成员的方式
+
+	Child child;//声明Child类的对象
+	child.SetThree(1, 2, 3);//设置派生类的数据
+	cout << "The data of child: "<< child.GetX() << ", " << child.GetY() << ", " << child.GetZ() << endl; 
+
+	Child2 child2(3,4,5,6);
 
 	return 0;
 }
