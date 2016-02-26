@@ -116,6 +116,174 @@ Clock fun2()
 	return A; //调用拷贝构造函数
 }
 
+//类的组合1：start
+class Point
+{ 
+public:
+	Point(int xx,int yy) { X=xx; Y=yy; } //构造函数
+	Point(Point &p);
+	int GetX(void) { return X; } //取X坐标
+	int GetY(void) { return Y; } //取Y坐标
+
+private:
+	int X,Y; //点的坐标
+};
+
+Point::Point(Point &p)
+{
+	X = p.X;
+	Y = p.Y;
+	cout << "Point拷贝构造函数被调用" << endl;
+}
+
+class Distance
+{
+public:
+	Distance(Point a,Point b); //构造函数
+	double GetDis()   { return dist; }
+
+private:
+	Point  p1, p2;
+	double dist;// 距离
+};
+
+Distance::Distance(Point a,Point b):p1(a), p2(b)
+{
+	cout<< "Distance构造函数被调用" <<endl;
+	double x = double(p1.GetX() - p2.GetX());
+	double y = double(p1.GetY() - p2.GetY());
+	dist = x*x + y*y;
+}
+//类的组合1：end
+
+
+//类的组合2：start
+/*
+两个类可能相互包含，即类A中有类B类型的内嵌对象，类B中也有A类型的内嵌对象。在C++中，要使用一个类必须在
+使用前已经声明了该类，但是两个类互相包含时就肯定有一个类在定义之前就被引用了，这时候怎么办呢？就要用到前向引用
+声明了。前向引用声明是在引用没有定义的类之前对该类进行声明，这只是为程序声明一个代表该类的标识符，类的具体定义
+可以在程序的其他地方，简单说，就是声明下这个标识符是个类，它的定义可以在别的地方找到。
+*/
+class B;//前向引用声明
+class A
+{  
+public:
+	void f(B b);
+};
+
+/*
+void A::f(B b)//貌似在这里还不能找到B类的对象，why?
+{
+	cout<<"temp = "<<b.getTemp()<<endl;
+}
+*/
+
+class B
+{  
+public:
+	void g(A a);
+	int getTemp(){return temp;}
+private:
+	int temp;
+};
+
+//类的组合2：end
+
+
+//类模板：start
+// 定义结构体Student
+struct Student
+{
+	int id;//学号
+	float average;//平均分
+};
+
+template <class T>
+class Store
+{
+public:
+	Store(void);//默认形式（无形参）的构造函数
+	T GetElem(void);//获取数据
+	void PutElem(T x);//存入数据
+private:
+	T item; // item用来存放任意类型的数据
+	int haveValue;//标识item是否被存入数据
+};
+
+// 以下是成员函数的实现，注意，类模板的成员函数都是函数模板
+// 构造函数的实现
+template <class T>//函数模板
+Store<T>::Store(void):haveValue(0)//注意“Store<T>::”的写法；haveValue(0)：为变量haveValue赋值为0
+{
+}
+
+// 获取数据的函数的实现
+template <class T>
+T Store<T>::GetElem(void)
+{
+	// 若item没有存入数据，则终止程序
+	if (haveValue == 0)
+	{
+		cout << "item没有存入数据!" << endl;
+		exit(1);
+	}
+	return item;
+}
+
+// 存入数据的函数的实现
+template <class T>
+void Store<T>::PutElem(T x)
+{
+	haveValue = 1; //将其置为1，表示item已经存入数据
+	item = x;// 将x的值存入item
+}
+//类模板：end
+
+//类的继承与派生：start
+class employee// 雇员类
+{
+public:
+	employee();//构造函数
+	~employee();//析构函数
+	void promote(int);//升级函数
+	void getSalary();//计算工资
+
+protected:
+	char *m_szName;//雇员姓名
+	int   m_nGrade;//级别
+	float m_fSalary;//工资
+};
+//salesman类继承employee类，将除了基类的构造函数和析构函数外的所有其他成员全部接收
+/*
+派生类的继承方式为public，即公有继承时，对基类中的公有成员和保护成员的访问属性都不变，而对基类的私有成员则不能访问
+。具体说，就是基类的公有成员和保护成员被继承到派生类中以后同样成为派生类的公有成员和保护成员，派生类中新增成员对他
+们可以直接访问，派生类的对象只能访问继承的基类公有成员。但是派生类的新增成员和派生类的对象都不能访问基类的私有成员;
+
+派生类的继承方式为protected，即保护继承方式时，基类的公有成员和保护成员被派生类继承后变成派生类的保护成员，
+而基类的私有成员在派生类中不能访问。因为基类的公有成员和保护成员在派生类中都成了保护成员，所以派生类的新增成员
+可以直接访问基类的公有成员和保护成员，而派生类的对象不能访问它们。千万要记住类的对象也是处于类外的，
+不能访问类的保护成员。对基类的私有成员，派生类的新增成员函数和派生类对象都不能访问
+
+ 派生类的继承方式为private，即私有继承方式时，基类的公有成员和保护成员被派生类继承后变成派生类的私有成员，
+ 而基类的私有成员在派生类中不能访问。 派生类的新增成员可以直接访问基类的公有成员和保护成员，但是在类的外
+ 部通过派生类的对象不能访问它们，而派生类的成员和派生类的对象都不能访问基类的私有成员。
+*/
+class salesman : public employee
+{
+public:
+	salesman();
+	~salesman();
+	//派生类修改基类成员的方式之一：通过在派生类中声明和基类中数据或函数同名的成员，覆盖基类的相应数据或函数。
+	//一旦我们在派生类中声明了一个和基类某个成员同名的成员，那么派生类这个成员就会覆盖外层的同名成员。
+	//这叫做同名覆盖。需要注意的是，要实现函数覆盖不只要函数同名，函数形参表也要相同
+	void getSalary();//计算工资，
+
+private:
+	float m_fProportion;//提成比例
+	float m_fSalesSum;//当月总销售额
+};
+//类的继承与派生：end
+
 int main()
 {
 	//Clock myClock;//如果没有为类定义构造函数，则编译器会为类生成默认的构造函数Clock()
@@ -145,6 +313,30 @@ int main()
 	*/
 	Clock myClock5 = fun2();
 	cout<<"Second = "<<myClock5.GetSecond()<<endl; 
+
+	cout<<"================================="<<endl; 
+
+	Point myp1(1,1), myp2(4,5);
+	/*
+	类的内嵌调用顺序：按照内嵌对象在组合类的声明中出现的次序，依次调用内嵌对象的构造函数，然后再执行本类的构造函数的函数体：
+	先调用p1的构造函数，再调用p2的构造函数，最后执行Distance构造函数的函数体。析构函数的执行顺序与构造函数正好相反。
+	*/
+	Distance myd(myp1, myp2);//Point类的拷贝构造函数被调用了4次，而且都是在Distance类构造函数执行之前进行的，在Distance构造函数进行实参和形参的结合时，也就是传入myp1和myp2的值时调用了两次，在用传入的值初始化内嵌对象p1和p2时又调用了两次。
+	cout<< "The distance is:"<<myd.GetDis() << endl;
+
+	// 声明Student结构体类型变量，并赋初值
+	Student g = { 103, 93 };
+	// 声明两个Store类的对象，数据成员item为int类型
+	Store<int> S1, S2;
+	// 声明Store类对象S3，数据成员item为Student结构体类型
+	Store<Student> S3;
+	S1.PutElem(7);// 向对象S1中存入数值7
+	S2.PutElem(-1);// 向对象S2中存入数值-1
+	// 输出S1和S2的数据成员的值
+	cout << S1.GetElem() << "  " << S2.GetElem() << endl;
+	S3.PutElem(g); // 向对象S3中存入Student结构体类型变量g
+	// 输出对象S3的数据成员
+	cout << "The student id is " << S3.GetElem().id << endl;//注意结构体访问其数据成员的方式
 
 	return 0;
 }
