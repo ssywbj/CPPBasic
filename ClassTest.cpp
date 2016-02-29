@@ -41,7 +41,12 @@ class Clock
 {
 public:
 	Clock(int NewH, int NewM, int NewS);//声明构造函数
-	Clock(int NewH, int NewM){Hour=NewH; Minute=NewM;Second = NewM;}//声明并定义构造函数
+	Clock(int NewH, int NewM)//声明并定义构造函数
+	{
+		Hour=NewH;
+		Minute=NewM;
+		Second = NewM;
+	}
 
 	Clock(Clock &clock);//声明拷贝构造函数，它的形参是本类的对象的引用
 
@@ -287,20 +292,20 @@ private:
 class Base// 基类Base的声明
 {
 public:// 公有成员函数
-	void SetTwo(int a, int b)  { x=a; y=b; }
-	int GetX()   { return x; }
-	int GetY()   { return y; }
+	void SetTwo(int a, int b) { x=a; y=b; }
+	int GetX(){ return x; }
+	int GetY(){ return y; }
 
 private:// 私有数据成员
 	int x;
 	int y;
 };
 
-class Child : private Base // 派生类的声明，继承方式为私有继承
+class Child : private Base //派生类的声明，继承方式为私有继承
 {
-public:                      // 新增公有成员函数
+public://新增公有成员函数
 	void SetThree(int a, int b, int c) { SetTwo(a, b); z=c; }
-	int GetX() { return Base::GetX(); }//访问基类的同名方法，注意访问格式
+	int GetX() { return Base::GetX(); }//访问基类中的同名方法，注意访问格式
 	int GetY() { return Base::GetY(); }
 	int GetZ() { return z; }
 
@@ -345,7 +350,7 @@ public:
 	序与其在构造函数中的构造顺序相反；3.调用基类的析构函数清理继承的基类成员，如果是多继承则各个基类的清理顺序也
 	与其在构造函数中的构造顺序相反。总起来一句话，析构函数执行时所有成员或对象的清理顺序与构造函数的构造顺序刚好完全相反。
 	*/
-	Child2(int i,int j,int k,int m):Base2(i),b3(j),b2(k),Base3(m){ }//带有基类的构造函数和内嵌对象；声明并定义
+	Child2(int i,int j,int k,int m):Base2(i),b3(j),b2(k),Base3(m){}//带有基类的构造函数和内嵌对象；声明并定义
 	Child2(int p,int m,int n);//只声明
 
 private: // 派生类的内嵌对象成员
@@ -356,8 +361,102 @@ private: // 派生类的内嵌对象成员
 
 Child2::Child2(int p,int m,int n):Base2(p),b3(m),b2(n),Base3(p)//定义
 {
-
 }
+
+class Base11 // 基类Base1的声明
+{
+	public:
+	int x;
+	void show(){ cout<<"x of Base11: "<<x<<endl; } 
+};
+
+class Base22// 基类Base2的声明
+{
+	public:
+	int x;
+	void show(){ cout<<"x of Base22: "<<x<<endl; } 
+};
+/*多继承：如果多个基类之间没有继承关系也没有共同基类，基类中含有具有同名成员，派生类也新增
+了同名成员，则派生类成员会覆盖所有基类中的同名成员。通过成员名只能访问到派生类的成员，
+要访问各基类的同名成员就需要使用作用域分辨符；哪怕派生类中不存在同名成员，访问多个
+基类的同名成员也需要使用作用域分辨符，因为从不同基类继承过来的同名成员具有相同的作用域，
+通过成员名无法唯一标识成员。*/
+class Child33 : public Base11, public Base22// 派生类Child的声明
+{
+	public:
+	int x;
+	void show(){ cout<<"x of Child33: "<<x<<endl; } 
+};
+
+/*多继承：如果派生类的全部或者部分基类有共同的基类，也就是说派生类的这些基类是从同一个
+基类派生出来的，那么派生类的这些直接基类从上一级基类继承的成员都具有相同的名称，
+即都是同名成员，定义了派生类的对象后，同名数据成员就会在内存中有多份拷贝
+，同名函数也会有多个映射, 要访问它们就必须通过直接基类限定，使用作用域分辨符访问。*/
+class Base44// 基类Base44的声明
+{
+	public:
+	int x;
+	void show() { cout<<"x of Base44: "<<x<<endl; }
+};
+
+class Base441 : public Base44 // 由Base44派生的类Base441的声明
+{
+};
+
+class Base442 : public Base44 // 由Base44派生的类Base442的声明
+{
+};
+
+class Child44 : public Base441, public Base442
+{
+};
+
+/*虚基类技术：派生类直接基类的共同基类声明为虚基类后，派生类从不同的直接基类继承
+来的同名数据成员在内存中就会只有一份拷贝，同名函数也会只有一个映射，这样不仅实现了
+唯一标识同名成员，而且也节省了内存空间，可见比起使用作用域分辨符访问，虚基类技术是很实用。*/
+class Base0v // 基类Base0的声明，虚基类没有定义构造函数的情况
+{
+	public:
+	int x;
+	void show()      { cout<<"x of Base0v: "<<x<<endl; }
+};
+//声明虚基类只需要在它的派生类声明时使用关键字virtual修饰
+class Base1v : virtual public Base0v// Base0v为虚基类，公有派生Base1v类
+{
+};
+class Base2v : virtual public Base0v// Base0v为虚基类，公有派生Base2v类
+{
+};
+class Childv : public Base1v, public Base2v
+{
+};
+
+/*如果虚基类定义了带参数表的非默认构造函数，没有定义默认形式的构造函数，
+那么由虚基类直接或间接继承的所有派生类，都必须在构
+造函数的成员初始化列表中给出对虚基类成员的初始化。*/
+class Base0vc// 基类Base0的声明，虚基灶定义了构造函数的情况
+{
+	public:
+	Base0vc(int y)     { x=y; }
+	int x;
+	void show()      { cout<<"x of Base0vc: "<<x<<endl; }
+};
+class Base1vc : virtual public Base0vc     // Base0为虚基类，公有派生Base1类
+{
+	public:
+	Base1vc(int y):Base0vc(y)    { }//对虚基类成员的初始化
+};
+class Base2vc : virtual public Base0vc     // Base0为虚基类，公有派生Base2类
+{
+	public:
+	Base2vc(int y):Base0vc(y)    { } //对虚基类成员的初始化 
+};
+class Childvc : public Base1vc, public Base2vc
+{
+	public:
+	Childvc(int y):Base0vc(y),Base1vc(y),Base2vc(y)   { }//也需要对虚基类成员的初始化
+	//void show(){ cout<<"x of Childvc: "<<x<<endl; }
+};
 
 //类的继承与派生：end
 
@@ -421,5 +520,39 @@ int main()
 
 	Child2 child2(3,4,5,6);
 
+	Child33 child33;
+	child33.x = 5;          // 访问派生类数据成员
+	child33.show();         // 调用派生类函数成员
+	child33.Base11::x = 7;   // 使用作用域分辨符访问基类Base1的数据成员
+	child33.Base11::show();  // 使用作用域分辨符调用基类Base1的函数成员
+	child33.Base22::x = 8;   // 使用作用域分辨符访问基类Base2的数据成员
+    child33.Base22::show();  // 使用作用域分辨符访问基类Base2的函数成员
+
+	Child44 child44;
+	child44.Base441::x = 3;      // 通过直接基类Base1限定成员
+	child44.Base441::show();
+	child44.Base442::x = 5;      // 通过直接基类Base2限定成员
+	child44.Base442::show();
+
+	Childv childv;
+	childv.x = 5;
+	childv.show();
+
+	/*定义派生类Childvc的对象childvc，在构造对象chilvcd时调用了Childvc的构造函数
+	，其初始化列表中不只调用了虚基类Base0vc的构造函数对从它继承的成员x进行初始化，而
+	且还调用了基类Base1vc和Base2vc的构造函数Base1vc()和Base2vc()，而Base1vc()和Base2vc()
+	的初始化列表中又有对虚基类Base0vc成员x的初始化。这么说，从虚基类Base0vc继承来的成员
+	x初始化了三次，其实不然，因为编译器在遇到这种情况时会进行特殊处理：如果构造的对象中
+	有从虚基类继承来的成员，那么虚基类成员的初始化由而且只由最远派生类的构造函数调
+	用虚基类的构造函数来完成。最远派生类就是声明对象时指定的类，上面例子中构造对象
+	child时，类Child就是最远派生类。除了最远派生类，它的其他基类对虚基类构造函数的
+	调用会被忽略。上例中就只会由Childvc类的构造函数调用虚基类Base0vc的构造函数完成成员
+	x的初始化，而Childvc类的基类Base1vc和Base2vc对虚基类Base0vc构造函数的调用会被忽略。*/
+	Childvc childvc(3);
+	childvc.show();
+	//childvc.Base1vc::x = 99;      // 通过直接基类Base1限定成员
+	//childvc.Base1vc::show();
+	//childvc.Base2vc::x = 100;      // 通过直接基类Base1限定成员
+	//childvc.Base2vc::show();
 	return 0;
 }
