@@ -300,7 +300,7 @@ class Child : private Base // 派生类的声明，继承方式为私有继承
 {
 public:                      // 新增公有成员函数
 	void SetThree(int a, int b, int c) { SetTwo(a, b); z=c; }
-	int GetX() { return Base::GetX(); }//访问基类的同名方法，注意访问格式
+	int GetX() { return Base::GetX(); }//在派生类内部访问基类的同名方法或变量，注意访问格式
 	int GetY() { return Base::GetY(); }
 	int GetZ() { return z; }
 
