@@ -39,9 +39,14 @@ public:
 	CTimeSpan(){count++;}
 	CTimeSpan(int nHours, int nMins);      // 构造函数
 	CTimeSpan(int temp){m_temp = temp; count++;}
+
 	CTimeSpan operator +(CTimeSpan ts);// 运算符“+”重载为成员函数，双目运算符
 	CTimeSpan& operator ++();// 前置单目运算符重载
 	CTimeSpan operator ++(int);//后置单目运算符重载
+
+	//貌似在vc++6.0中不支持重载运算符为类的友元函数，因为编译不过
+	//friend CTimeSpan operator -(CTimeSpan ts1, CTimeSpan ts2);//运算符“-”重载为类友元函数
+
 	void SetHours(int Hours) {  m_nHours = Hours; }   
 	void SetMins(int Mins) {  m_nMins = Mins; }
 	int GetHours()      { return m_nHours; }   // 获取小时数
@@ -105,6 +110,24 @@ CTimeSpan CTimeSpan::operator ++(int)      //注意形参表中的整型参数
 	return old;
 }
 
+/*与运算符重载为成员函数时不同的是，重载的友元函数不属于任何类，运算符的操作数都
+需要通过函数的形参表传递。操作数在形参表中从左到右出现的顺序就是用运算符写表达式
+时操作数的顺序。
+
+如果是双目运算符U，它的其中一个操作数是类A的对象a，那么运算符U就可以重载为类A的友元函数，
+此友元函数的两个参数中，一个是类A的对象，另一个是其他对象，也可以是类A的对象。
+*/
+/*CTimeSpan operator -(CTimeSpan ts1, CTimeSpan ts2)  // 重载运算符函数实现
+{
+	int nNewHours = ts1.m_nHours  + ts2.m_nHours ;
+	int nNewMins = ts1.m_nMins + ts2.m_nMins ;
+	nNewHours += nNewMins/60;
+	nNewMins %= 60;
+	return CTimeSpan(nNewHours, nNewMins);
+}
+貌似在vc++6.0中不支持重载运算符为类的友元函数，因为编译不过
+*/
+
 void CTimeSpan::Show()
 {
 	cout << m_nHours << "小时" << m_nMins << "分钟" << endl;
@@ -130,6 +153,10 @@ private:
 友元关系不能传递：如果类B是类CTimeSpan的友元，类C又是类B的友元，类C和类CTimeSpan如果没有声明则没有友元关系：
 友元关系是单向的，如果类B是类CTimeSpan的友元，类B的成员函数可以访问类CTimeSpan对象的私有成员和保护成员，
 但是类CTimeSpan的成员函数不能访问类B对象的私有成员和保护成员。
+
+友元破坏了类的封装性和类数据的隐藏性，但是又给软件开发提供了很多方便，在实地进行软件
+开发的时候可以自己在共享和封装之间平衡一下，决定是否选择使用友元，但原则上尽量少使
+用或不使用友元，除非确实很大的提高了开发效率。
 */
 void B::Set(int i)
 {
@@ -187,5 +214,17 @@ int main()
 	b.Set(10000);
 	b.Display();
 
+	/*貌似在vc++6.0中不支持重载运算符为类的友元函数，因为编译不过
+	CTimeSpan timeSpan11(2, 50);
+	CTimeSpan timeSpan21(3, 30);
+	cout << "timeSpan11: ";
+	timeSpan11.Show();
+	cout << "timeSpan21: ";
+	timeSpan21.Show();
+	CTimeSpan timeSum1;
+	timeSum1 = timeSpan11 - timeSpan21;
+	cout << "timeSum1 = timeSpan11 - timeSpan21: ";
+	timeSum1.Show();
+    */
 	return 0;
 }
