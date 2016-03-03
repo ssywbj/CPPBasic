@@ -559,6 +559,6 @@ int main()
 	childvc.Base1vc::show();
 	childvc.Base2vc::x = 100;      // 通过直接基类Base1限定成员
 	childvc.Base2vc::show();
-	cout <<"==========虚基类============="<< endl; 
+	cout <<"==========虚基类============="<< endl;  
 	return 0;
 }

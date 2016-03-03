@@ -6,19 +6,23 @@
 --------------------Configuration: ClassTest - Win32 Debug--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\Users\Wbj\AppData\Local\Temp\RSPA25E.tmp" with contents
+Creating temporary file "C:\Users\Wbj\AppData\Local\Temp\RSPBF72.tmp" with contents
 [
 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:yes /pdb:"Debug/ClassTest.pdb" /debug /machine:I386 /out:"Debug/ClassTest.exe" /pdbtype:sept 
 .\Debug\ClassTest.obj
+.\Debug\NewDelete.obj
 ]
-Creating command line "link.exe @C:\Users\Wbj\AppData\Local\Temp\RSPA25E.tmp"
+Creating command line "link.exe @C:\Users\Wbj\AppData\Local\Temp\RSPBF72.tmp"
 <h3>Output Window</h3>
 Linking...
+NewDelete.obj : error LNK2005: _main already defined in ClassTest.obj
+Debug/ClassTest.exe : fatal error LNK1169: one or more multiply defined symbols found
+Error executing link.exe.
 
 
 
 <h3>Results</h3>
-ClassTest.exe - 0 error(s), 0 warning(s)
+ClassTest.exe - 2 error(s), 0 warning(s)
 </pre>
 </body>
 </html>
