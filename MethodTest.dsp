@@ -82,10 +82,6 @@ LINK32=link.exe
 # Name "MethodTest - Win32 Debug"
 # Begin Source File
 
-SOURCE=.\ClassTest.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\MethodTest.cpp
 # End Source File
 # End Target

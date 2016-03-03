@@ -416,13 +416,15 @@ class Child44 : public Base441, public Base442
 唯一标识同名成员，而且也节省了内存空间，可见比起使用作用域分辨符访问，虚基类技术是很实用。*/
 class Base0v // 基类Base0的声明，虚基类没有定义构造函数的情况
 {
-	public:
+public:
 	int x;
 	void show()      { cout<<"x of Base0v: "<<x<<endl; }
 };
 //声明虚基类只需要在它的派生类声明时使用关键字virtual修饰
 class Base1v : virtual public Base0v// Base0v为虚基类，公有派生Base1v类
 {
+public:
+	void show()      { cout<<"x of Base1v: "<<x<<endl; }
 };
 class Base2v : virtual public Base0v// Base0v为虚基类，公有派生Base2v类
 {
@@ -436,24 +438,24 @@ class Childv : public Base1v, public Base2v
 造函数的成员初始化列表中给出对虚基类成员的初始化。*/
 class Base0vc// 基类Base0的声明，虚基灶定义了构造函数的情况
 {
-	public:
+public:
 	Base0vc(int y)     { x=y; }
 	int x;
 	void show()      { cout<<"x of Base0vc: "<<x<<endl; }
 };
 class Base1vc : virtual public Base0vc     // Base0为虚基类，公有派生Base1类
 {
-	public:
+public:
 	Base1vc(int y):Base0vc(y)    { }//对虚基类成员的初始化
 };
 class Base2vc : virtual public Base0vc     // Base0为虚基类，公有派生Base2类
 {
-	public:
+public:
 	Base2vc(int y):Base0vc(y)    { } //对虚基类成员的初始化 
 };
 class Childvc : public Base1vc, public Base2vc
 {
-	public:
+public:
 	Childvc(int y):Base0vc(y),Base1vc(y),Base2vc(y)   { }//也需要对虚基类成员的初始化
 	//void show(){ cout<<"x of Childvc: "<<x<<endl; }
 };
@@ -534,9 +536,12 @@ int main()
 	child44.Base442::x = 5;      // 通过直接基类Base2限定成员
 	child44.Base442::show();
 
+	cout <<"==========虚基类============="<< endl; 
 	Childv childv;
 	childv.x = 5;
 	childv.show();
+	childv.Base1v::show();
+	childv.Base2v::show();
 
 	/*定义派生类Childvc的对象childvc，在构造对象chilvcd时调用了Childvc的构造函数
 	，其初始化列表中不只调用了虚基类Base0vc的构造函数对从它继承的成员x进行初始化，而
@@ -550,9 +555,10 @@ int main()
 	x的初始化，而Childvc类的基类Base1vc和Base2vc对虚基类Base0vc构造函数的调用会被忽略。*/
 	Childvc childvc(3);
 	childvc.show();
-	//childvc.Base1vc::x = 99;      // 通过直接基类Base1限定成员
-	//childvc.Base1vc::show();
-	//childvc.Base2vc::x = 100;      // 通过直接基类Base1限定成员
-	//childvc.Base2vc::show();
+	childvc.Base1vc::x = 99;      // 通过直接基类Base1限定成员
+	childvc.Base1vc::show();
+	childvc.Base2vc::x = 100;      // 通过直接基类Base1限定成员
+	childvc.Base2vc::show();
+	cout <<"==========虚基类============="<< endl; 
 	return 0;
 }
