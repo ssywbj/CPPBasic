@@ -43,7 +43,7 @@ int main()
 	//printArr(arr, &arr[len]);
 
 	//cout<<returnStr()<<endl;
-	cout<<returnStr("Hello", "hi")<<endl;
+	//cout<<returnStr("Hello", "hi")<<endl;
 
     //函数返回指向数组的指针
 	int len = 0;
@@ -54,6 +54,32 @@ int main()
 		cout<<*begin++<<" ";// 输出数组元素
 	}
 	cout<<endl;
+
+	char *pCh = "dfkdafd";//用字符串常量初始化字符数组时，会自动添加表示字符结束的空字符
+	cout<<pCh<<endl;//直接输出数组
+	char *beginCh = pCh;
+	char *endCh = beginCh + strlen(pCh);
+	while(beginCh < endCh)
+	{
+		cout<<*beginCh++;
+	}
+	cout<<endl;
+
+	char temp[5];
+	int len2 = 0;
+	while(len2 < 4)
+	{
+		temp[len2] = *pCh;
+		len2++;
+		pCh++;
+	}
+	temp[4] = '\0';//最后一个位置存在空字符'\0'用于标识数组的结束，以免报错：字符数组的特殊性
+	cout<<temp<<endl;
+
+	char temp2[] = {'a', 'b', 'c'};
+	cout<<sizeof(temp2)/sizeof(*temp2)<<"::"<<temp2<<endl;//没有添加'\0'，数组的维度为3，将不会正确输出abc，因为找不到数组的结束符(字串数组的特殊性)
+	char temp3[] = {'a', 'b', 'c', '\0'};
+	cout<<sizeof(temp3)/sizeof(*temp3)<<"::"<<temp3<<endl;//显示地在数组的最后添加'\0'，数组的维度为4，将会正确输出abc
 
 	return 0;
 }
