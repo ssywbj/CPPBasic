@@ -16,7 +16,7 @@ void File::save(const char *absolutePath, const string &content)
 	}
 	else
 	{
-		cout<<"open fail"<<endl;
+		cout<<"open file fail"<<endl;
 	}
 	ofile.close();
 }
@@ -75,7 +75,6 @@ void File::save(const string &folder, const string &fileName, const string &cont
 		absolutePath[len] = folder[m];
 		len++;
 	}
-
 
 
 	for(int i = 0; i < fileSeparator.size(); i++)
