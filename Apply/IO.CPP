@@ -1,6 +1,7 @@
 #include<iostream>
+#include<direct.h>
+#include<stdlib.h>
 #include "IO.h"
-#include <direct.h>
 
 char* File::mBasePath = "D:\\CppFile\\";
 
@@ -16,7 +17,7 @@ void File::save(const char *absolutePath, const string &content)
 	}
 	else
 	{
-		cout<<"open file fail"<<endl;
+		cout<<"open file fail"<<endl;		
 	}
 	ofile.close();
 }
@@ -103,13 +104,13 @@ void File::save(const string &folder, const string &fileName, const string &cont
 
 int main()
 {
-	//char *absolutePath = "D:\\CppFile\\CPP_LOG.txt";
-	//File::save(absolutePath/*"D:\\CppFile\\CPP_LOG.txt"*/, "Ssy Love Wbj, forever!!\nSsy Love Wbj, forever!!");
+	char *absolutePath = "D:\\CppFile\\CPP_LOG.txt";
+	File::save(absolutePath/*"D:\\CppFile\\CPP_LOG.txt"*/, "Ssy Love Wbj, forever!!\nSsy Love Wbj, forever!!");
 
 	string fileName("Ssywbj.txt");
 	//File::save(fileName, "Ssy Love Wbj, forever!!\nËÕÊ±Ó±!!");
 
-	File::save("Auto", fileName, "Ssy Love Wbj, forever!!\nËÕÊ±Ó±!!");
+	File::save("childDir", fileName, "Ssy Love Wbj, forever!!\nËÕÊ±Ó±!!");
 
 	return 0;
 }
